@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviteca Alta Gama | Control de Vehículos</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            padding-bottom: 40px;
+        }
+
+        /* BARRA SUPERIOR */
+        .navbar {
+            background-color: #1a2332;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 70px;
+        }
+
+        .logo-empresa {
+            height: 55px;
+            width: auto;
+            background: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            object-fit: contain;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        /* TARJETAS DE CONTADORES */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-left: 5px solid #cbd5e1;
+        }
+
+        .kpi-card.blue { border-left-color: #3b82f6; }
+        .kpi-card.green { border-left-color: #10b981; }
+        .kpi-card.red { border-left-color: #ef4444; }
+
+        .kpi-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        /* BARRA DE BÚSQUEDA Y ACCIONES */
+        .toolbar-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: #fff;
+        }
+
+        .search-input:focus {
+            border-color: #3b82f6;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn:hover { opacity: 0.9; }
+
+        .btn-orange { background-color: #ea580c; color: white; }
+        .btn-gray { background-color: #64748b; color: white; }
+        .btn-danger { background-color: #ef4444; color: white; }
+        .btn-blue { background-color: #2563eb; color: white; }
+        .btn-sm { padding: 6px 12px; font-size: 0.85rem; }
+
+        /* CONTENEDOR PRINCIPAL DEL HISTORIAL */
+        .content-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .content-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-header h2 {
+            font-size: 1.15rem;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        /* GRUPOS DE FECHA Y VEHÍCULOS */
+        .grupo-fecha {
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .grupo-fecha:last-child {
+            border-bottom: none;
+        }
+
+        .titulo-fecha {
+            background-color: #1e293b;
+            color: #ffffff;
+            padding: 10px 25px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .titulo-fecha label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-vehiculo {
+            padding: 14px 25px;
+            border-bottom: 1px solid #f8fafc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            transition: background 0.15s;
+        }
+
+        .item-vehiculo:hover {
+            background-color: #f8fafc;
+        }
+
+        .item-vehiculo-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .info-principal {
+            font-size: 0.95rem;
+            color: #334155;
+        }
+
+        .hora-tag {
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #2563eb;
+        }
+
+        .btn-mover {
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .btn-mover:hover { background: #e2e8f0; }
+        .btn-mover:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .empty-state {
+            padding: 50px 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        /* MODAL DE FORMULARIO REGISTRO/EDICIÓN */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-body {
+            background: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            border-radius: 12px;
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ef4444;
+            padding-bottom: 10px;
+        }
+
+        .form-group { margin-bottom: 15px; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 640px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .toolbar-card { flex-direction: column; align-items: stretch; }
+            .search-input { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA SUPERIOR CON LOGO -->
+    <nav class="navbar">
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 200' width='100%' height='auto'><defs><linearGradient id='g' x1='0%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%2302471b'/><stop offset='60%' stop-color='%23012b10'/><stop offset='100%' stop-color='%23001206'/></linearGradient></defs><rect width='100%' height='100%' fill='%23ffffff'/><line x1='80' y1='30' x2='65' y2='85' stroke='%23cc1118' stroke-width='4'/><line x1='88' y1='30' x2='73' y2='85' stroke='%23cc1118' stroke-width='4'/><polygon points='98,28 402,28 385,87 81,87' fill='%23cc1118'/><line x1='407' y1='30' x2='392' y2='85' stroke='%23cc1118' stroke-width='4'/><line x1='415' y1='30' x2='400' y2='85' stroke='%23cc1118' stroke-width='4'/><text x='241.5' y='68' fill='%23ffffff' font-family='Arial Black, Impact, sans-serif' font-weight='900' font-style='italic' font-size='32' text-anchor='middle' letter-spacing='2'>=SERVITECA=</text><text x='241.5' y='160' fill='url(%23g)' font-family='Arial Black, Impact, sans-serif' font-style='italic' font-weight='900' font-size='68' text-anchor='middle' letter-spacing='1'>ALTA GAMA</text></svg>" alt="Logo Serviteca" class="logo-empresa">
+    </nav>
+
+    <div class="container">
+        <!-- METRICAS / CONTADORES -->
+        <div class="kpi-grid">
+            <div class="kpi-card blue">
+                <div class="kpi-title">EN TALLER / PROCESO</div>
+                <div class="kpi-value" id="kpiProceso">0</div>
+            </div>
+            <div class="kpi-card green">
+                <div class="kpi-title">SERVICIOS FINALIZADOS</div>
+                <div class="kpi-value" id="kpiFinalizados">0</div>
+            </div>
+            <div class="kpi-card red">
+                <div class="kpi-title">ÓRDENES CANCELADAS</div>
+                <div class="kpi-value" id="kpiCancelados">0</div>
+            </div>
+        </div>
+
+        <!-- BARRA DE BÚSQUEDA Y ACCIONES -->
+        <div class="toolbar-card">
+            <input type="text" id="buscarInput" class="search-input" placeholder="DIGITE LA PLACA O MARCA A BUSCAR... (Ej: ZV623 o Suzuki)">
+            <button class="btn btn-orange" onclick="buscarVehiculo()">🔍 Buscar</button>
+            <button class="btn btn-gray" onclick="mostrarTodos()">🔄 Ver Todos</button>
+            <button class="btn btn-danger" onclick="eliminarSeleccionados()">🗑️ Eliminar Seleccionados</button>
+            <button class="btn btn-blue" onclick="abrirModal()">➕ Registrar Vehículo</button>
+        </div>
+
+        <!-- CONTENEDOR DEL HISTORIAL -->
+        <div class="content-card">
+            <div class="content-header">
+                <h2>Historial Clasificado por Fecha de Ingreso</h2>
+                <button class="btn btn-gray btn-sm" id="btnSeleccionarTodo" onclick="toggleSeleccionarTodoGlobal()">Seleccionar Todo</button>
+            </div>
+            <div id="contenedorHistorial"></div>
+        </div>
+    </div>
+
+    <!-- MODAL DE FORMULARIO -->
+    <div class="modal-overlay" id="modalForm">
+        <div class="modal-body">
+            <div class="modal-header">
+                <h3 id="modalTitulo" style="color: #0f172a;">🛠️ Registrar Vehículo</h3>
+                <button onclick="cerrarModal()" style="border:none; background:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <form id="formVehiculo" onsubmit="guardarVehiculo(event)">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Placa *</label>
+                        <input type="text" id="placa" class="form-control" required placeholder="Ej: ZV623" style="text-transform: uppercase;">
+                    </div>
+                    <div class="form-group">
+                        <label>Marca y Modelo *</label>
+                        <input type="text" id="modelo" class="form-control" required placeholder="Ej: Suzuki Vitara 2023">
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Kilometraje *</label>
+                        <input type="number" id="kilometraje" class="form-control" required placeholder="Ej: 35000">
+                    </div>
+                    <div class="form-group">
+                        <label>Estado del Proceso *</label>
+                        <select id="proceso" class="form-control" required>
+                            <option value="En Espera">En Espera</option>
+                            <option value="En Diagnóstico">En Diagnóstico</option>
+                            <option value="En Reparación">En Reparación</option>
+                            <option value="Listo para Entregar">Listo para Entregar</option>
+                            <option value="Cancelado">Servicio Cancelado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Proceso a realizar / Diagnóstico *</label>
+                    <textarea id="diagnostico" class="form-control" required rows="3" placeholder="Detalle fallas y trabajos a realizar..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Observaciones Adicionales</label>
+                    <textarea id="observaciones" class="form-control" rows="2" placeholder="Notas adicionales o repuestos..."></textarea>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn btn-gray" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Guardar en Historial</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+    let inventarioAutos = JSON.parse(localStorage.getItem('servitecaBD')) || {};
+    let listaOrdenadaAutos = [];
+    let filtroBusqueda = "";
+
+    window.onload = function() {
+        renderizarHistorial();
+    };
+
+    async function obtenerFechaHoraInternet() {
+        try {
+            let respuesta = await fetch('https://worldtimeapi.org/api/ip');
+            if (respuesta.ok) {
+                let datos = await respuesta.json();
+                return new Date(datos.datetime);
+            }
+        } catch (e) {
+            console.log("Usando fecha local como respaldo.");
+        }
+        return new Date();
+    }
+
+    async function guardarVehiculo(event) {
+        event.preventDefault();
+
+        let placa = document.getElementById('placa').value.toUpperCase().trim();
+        let ahora = await obtenerFechaHoraInternet();
+
+        let opcionesFecha = { day: 'numeric', month: 'long', year: 'numeric' };
+        let fechaFormateada = ahora.toLocaleDateString('es-ES', opcionesFecha);
+
+        let opcionesHora = { hour: 'numeric', minute: '2-digit', hour12: true };
+        let horaFormateada = ahora.toLocaleTimeString('es-ES', opcionesHora);
+
+        let ordenExistente = inventarioAutos[placa] ? inventarioAutos[placa].ordenIndex : Date.now();
+
+        inventarioAutos[placa] = {
+            placa: placa,
+            modelo: document.getElementById('modelo').value,
+            kilometraje: document.getElementById('kilometraje').value,
+            proceso: document.getElementById('proceso').value,
+            diagnostico: document.getElementById('diagnostico').value,
+            observaciones: document.getElementById('observaciones').value,
+            fechaTexto: fechaFormateada,
+            horaTexto: horaFormateada,
+            timestamp: ahora.getTime(),
+            ordenIndex: ordenExistente
+        };
+
+        localStorage.setItem('servitecaBD', JSON.stringify(inventarioAutos));
+        cerrarModal();
+        renderizarHistorial();
+    }
+
+    function renderizarHistorial() {
+        let contenedor = document.getElementById('contenedorHistorial');
+        contenedor.innerHTML = '';
+
+        listaOrdenadaAutos = Object.values(inventarioAutos);
+
+        actualizarContadores(listaOrdenadaAutos);
+
+        if (filtroBusqueda) {
+            listaOrdenadaAutos = listaOrdenadaAutos.filter(a => 
+                a.placa.toLowerCase().includes(filtroBusqueda) || 
+                a.modelo.toLowerCase().includes(filtroBusqueda)
+            );
+        }
+
+        if (listaOrdenadaAutos.length === 0) {
+            contenedor.innerHTML = '<div class="empty-state">No se encontraron vehículos registrados con ese criterio de búsqueda.</div>';
+            return;
+        }
+
+        listaOrdenadaAutos.sort((a, b) => (b.ordenIndex || b.timestamp) - (a.ordenIndex || a.timestamp));
+
+        let gruposPorFecha = {};
+        listaOrdenadaAutos.forEach(auto => {
+            if (!gruposPorFecha[auto.fechaTexto]) {
+                gruposPorFecha[auto.fechaTexto] = [];
+            }
+            gruposPorFecha[auto.fechaTexto].push(auto);
+        });
+
+        let indiceFecha = 0;
+
+        for (let fecha in gruposPorFecha) {
+            indiceFecha++;
+            let divGrupo = document.createElement('div');
+            divGrupo.className = 'grupo-fecha';
+
+            let idFechaChk = `chk-dia-${indiceFecha}`;
+
+            let titulo = document.createElement('div');
+            titulo.className = 'titulo-fecha';
+            titulo.innerHTML = `
+                <label>
+                    <input type="checkbox" id="${idFechaChk}" class="checkbox-custom" onchange="seleccionarPorDia('${fecha}', this.checked)">
+                    ${fecha}
+                </label>
+            `;
+            divGrupo.appendChild(titulo);
+
+            gruposPorFecha[fecha].forEach(auto => {
+                let posGlobal = listaOrdenadaAutos.findIndex(a => a.placa === auto.placa);
+                let esPrimero = posGlobal === 0;
+                let esUltimo = posGlobal === listaOrdenadaAutos.length - 1;
+
+                let item = document.createElement('div');
+                item.className = 'item-vehiculo';
+                item.innerHTML = `
+                    <div class="item-vehiculo-left">
+                        <input type="checkbox" value="${auto.placa}" data-fecha="${fecha}" class="checkbox-custom chk-vehiculo">
+                        <div style="display:flex; flex-direction:column; gap:2px;">
+                            <button class="btn-mover" onclick="moverRegistro(${posGlobal}, -1)" ${esPrimero ? 'disabled' : ''} title="Mover arriba">⬆️</button>
+                            <button class="btn-mover" onclick="moverRegistro(${posGlobal}, 1)" ${esUltimo ? 'disabled' : ''} title="Mover abajo">⬇️</button>
+                        </div>
+                        <div class="info-principal">
+                            <strong>${auto.placa}</strong> — ${auto.modelo} <span style="color:#64748b;">(${auto.proceso})</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span class="hora-tag">hora ${auto.horaTexto}</span>
+                        <button class="btn btn-blue btn-sm" onclick="cargarParaEditar('${auto.placa}')">Ver/Editar</button>
+                    </div>
+                `;
+                divGrupo.appendChild(item);
+            });
+
+            contenedor.appendChild(divGrupo);
+        }
+    }
+
+    function actualizarContadores(autos) {
+        let enProceso = autos.filter(a => a.proceso !== 'Listo para Entregar' && a.proceso !== 'Cancelado').length;
+        let finalizados = autos.filter(a => a.proceso === 'Listo para Entregar').length;
+        let cancelados = autos.filter(a => a.proceso === 'Cancelado').length;
+
+        document.getElementById('kpiProceso').innerText = enProceso;
+        document.getElementById('kpiFinalizados').innerText = finalizados;
+        document.getElementById('kpiCancelados').innerText = cancelados;
+    }
+
+    function moverRegistro(indiceActual, direccion) {
+        let nuevoIndice = indiceActual + direccion;
+        if (nuevoIndice < 0 || nuevoIndice >= listaOrdenadaAutos.length) return;
+
+        let autoActual = listaOrdenadaAutos[indiceActual];
+        let autoDestino = listaOrdenadaAutos[nuevoIndice];
+
+        let tempOrden = autoActual.ordenIndex || autoActual.timestamp;
+        autoActual.ordenIndex = autoDestino.ordenIndex || autoDestino.timestamp;
+        autoDestino.ordenIndex = tempOrden;
+
+        if (autoActual.ordenIndex === autoDestino.ordenIndex) {
+            autoActual.ordenIndex += direccion > 0 ? -1 : 1;
+        }
+
+        inventarioAutos[autoActual.placa] = autoActual;
+        inventarioAutos[autoDestino.placa] = autoDestino;
+
+        localStorage.setItem('servitecaBD', JSON.stringify(inventarioAutos));
+        renderizarHistorial();
+    }
+
+    function seleccionarPorDia(fecha, estado) {
+        let checkboxes = document.querySelectorAll(`.chk-vehiculo[data-fecha="${fecha}"]`);
+        checkboxes.forEach(chk => chk.checked = estado);
+    }
+
+    function toggleSeleccionarTodoGlobal() {
+        let checkboxes = document.querySelectorAll('.chk-vehiculo');
+        let checkboxesDia = document.querySelectorAll('[id^="chk-dia-"]');
+        let btn = document.getElementById('btnSeleccionarTodo');
+
+        let hayDesmarcados = Array.from(checkboxes).some(chk => !chk.checked);
+
+        checkboxes.forEach(chk => chk.checked = hayDesmarcados);
+        checkboxesDia.forEach(chk => chk.checked = hayDesmarcados);
+
+        btn.innerText = hayDesmarcados ? "Desmarcar Todo" : "Seleccionar Todo";
+    }
+
+    function eliminarSeleccionados() {
+        let seleccionados = document.querySelectorAll('.chk-vehiculo:checked');
+        if (seleccionados.length === 0) {
+            alert('Selecciona al menos un vehículo para eliminar.');
+            return;
+        }
+
+        if (confirm(`¿Estás seguro de eliminar los ${seleccionados.length} registro(s) seleccionados?`)) {
+            seleccionados.forEach(chk => {
+                delete inventarioAutos[chk.value];
+            });
+
+            localStorage.setItem('servitecaBD', JSON.stringify(inventarioAutos));
+            document.getElementById('btnSeleccionarTodo').innerText = "Seleccionar Todo";
+            renderizarHistorial();
+        }
+    }
+
+    function buscarVehiculo() {
+        filtroBusqueda = document.getElementById('buscarInput').value.toLowerCase().trim();
+        renderizarHistorial();
+    }
+
+    function mostrarTodos() {
+        // Recarga la página por completo para refrescar la interfaz y destrabar cualquier estado
+        location.reload();
+    }
+
+    function abrirModal() {
+        document.getElementById('formVehiculo').reset();
+        document.getElementById('modalTitulo').innerText = "🛠️ Registrar Vehículo";
+        document.getElementById('modalForm').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalForm').style.display = 'none';
+    }
+
+    function cargarParaEditar(placa) {
+        let auto = inventarioAutos[placa];
+        document.getElementById('placa').value = auto.placa;
+        document.getElementById('modelo').value = auto.modelo;
+        document.getElementById('kilometraje').value = auto.kilometraje;
+        document.getElementById('proceso').value = auto.proceso;
+        document.getElementById('diagnostico').value = auto.diagnostico || '';
+        document.getElementById('observaciones').value = auto.observaciones || '';
+        
+        document.getElementById('modalTitulo').innerText = "✏️ Editar Vehículo";
+        document.getElementById('modalForm').style.display = 'flex';
+    }
+</script>
+
+</body>
+</html>
